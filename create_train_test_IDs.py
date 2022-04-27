@@ -32,8 +32,8 @@ test_FID = random.sample(list(ID['FID']), test_size)
 df_test_FID = pd.DataFrame(test_FID,columns = ['FID']).sort_values('FID').reset_index(drop=True)
 df_train_FID = ID[~ID['FID'].isin(test_FID)].sort_values('FID').reset_index(drop=True)
 
-df_test_FID.to_csv('test_ID.dat')
-df_train_FID.to_csv('train_ID.dat')
+df_test_FID.to_csv('/home/hochyard/UKBB/results/data_for_model/test_ID.dat')
+df_train_FID.to_csv('/home/hochyard/UKBB/results/data_for_model/train_ID.dat')
 
 pheno = pheno[pheno['FID'].isin(ID['FID'])].sort_values('FID').reset_index(drop=True) #assuming all chr have the same samples
 y_test = pheno[pheno['FID'].isin(test_FID)].reset_index(drop=True)
@@ -43,6 +43,6 @@ y_test.to_pickle('height_y_test.pkl')
 cov_matrix = cov_matrix[cov_matrix['FID'].isin(ID['FID'])].sort_values('FID').reset_index(drop=True) #assuming all chr have the same samples
 cov_matrix_test = cov_matrix[cov_matrix['FID'].isin(test_FID)].reset_index(drop=True)
 cov_matrix_train = cov_matrix[~cov_matrix['FID'].isin(cov_matrix_test['FID'])].reset_index(drop=True)
-cov_matrix_train.to_pickle('height_cov_matrix_train.pkl')
-cov_matrix_test.to_pickle('height_cov_matrix_test.pkl')
+cov_matrix_train.to_pickle('/home/hochyard/UKBB/results/data_for_model/height_cov_matrix_train.pkl')
+cov_matrix_test.to_pickle('/home/hochyard/UKBB/results/data_for_model/height_cov_matrix_test.pkl')
 
