@@ -32,8 +32,8 @@ test_FID = random.sample(list(ID['FID']), test_size)
 df_test_FID = pd.DataFrame(test_FID,columns = ['FID']).sort_values('FID').reset_index(drop=True)
 df_train_FID = ID[~ID['FID'].isin(test_FID)].sort_values('FID').reset_index(drop=True)
 
-df_test_FID.to_csv('/home/hochyard/UKBB/results/data_for_model/test_ID.dat')
-df_train_FID.to_csv('/home/hochyard/UKBB/results/data_for_model/train_ID.dat')
+df_test_FID.to_csv('/home/hochyard/UKBB/results/data_for_model/height_test_ID.dat')
+df_train_FID.to_csv('/home/hochyard/UKBB/results/data_for_model/height_train_ID.dat')
 
 pheno = pheno[pheno['FID'].isin(ID['FID'])].sort_values('FID').reset_index(drop=True) #assuming all chr have the same samples
 y_test = pheno[pheno['FID'].isin(test_FID)].reset_index(drop=True)
