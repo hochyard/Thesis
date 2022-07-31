@@ -3,8 +3,6 @@ import pickle
 from pandas_plink import read_plink, read_plink1_bin
 import numpy as np
 import pickle
-from sklearn.impute import KNNImputer, SimpleImputer
-from sklearn.preprocessing import StandardScaler,MinMaxScaler
 import os
 
 def split_X_to_chunks(gene_end_file_name, gene_output_end_file_name, chunk_size):
