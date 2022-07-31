@@ -22,4 +22,3 @@ df_train_FID = ID[~ID['FID'].isin(test_FID)].sort_values('FID').reset_index(drop
 df_test_FID.to_csv('/home/hochyard/UKBB/results/data_for_model/test_ID.dat', header=False, index=False)
 df_train_FID.to_csv('/home/hochyard/UKBB/results/data_for_model/train_ID.dat', header=False, index=False)
 
-#what about the validation??????????????????
