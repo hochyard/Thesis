@@ -20,9 +20,7 @@ import os
 
 def build_autoencoder(input_size):
     new_dim_snps = int(input_size * 0.1)
-    #encoder = keras.Sequential([layers.Dense(new_dim_snps, input_shape=[input_size])])
-    #Denoising Autoencoders
-    # model
+    # Denoising Autoencoders
     encoder = models.Sequential(name='encoder')
     encoder.add(layer=layers.Dense(units=new_dim_snps*2, activation=layers.PReLU(), input_shape=[input_size]))
     encoder.add(layers.Dropout(0.1))
@@ -34,16 +32,11 @@ def build_autoencoder(input_size):
     decoder.add(layer=layers.Dense(units=input_size, activation=layers.PReLU()))
     
     autoencoder = models.Sequential([encoder, decoder])
-
-    #encoder = keras.Sequential([layers.Dense(new_dim_snps, input_shape=[input_size], activation=layers.PReLU(), activity_regularizer=regularizers.l1(10e-5))])
-    #decoder = keras.Sequential([layers.Dense(input_size, input_shape=[new_dim_snps], activation=layers.PReLU())])
-    #autoencoder = keras.Sequential([encoder, decoder])
-    #autoencoder.compile(loss="mse", optimizer=SGD(learning_rate=0.01,momentum=0.1))
     autoencoder.compile(loss="mse", optimizer=Adam(learning_rate=0.00001))
     autoencoder.summary()
     return autoencoder
 
-def fit_autoencoder(num_epochs_from,num_epochs_to, X_train_chunks_file, X_val, autoencoder=None):
+def fit_autoencoder(num_epochs_from,num_epochs_to, X_train_chunks_file, X_val, start_time, autoencoder=None):
     loss = []
     val_loss = []
     for epoch in range(num_epochs_from, num_epochs_to + 1):
@@ -61,7 +54,7 @@ def fit_autoencoder(num_epochs_from,num_epochs_to, X_train_chunks_file, X_val, a
                         continue
                     batch = batch.drop(['FID'], axis=1)
                     # fit
-                    es = EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=20, restore_best_weights=True)
+                    es = EarlyStopping(monitor='val_loss', min_delta=0.001, patience=2, restore_best_weights=True)
                     history = autoencoder.fit(batch, batch, epochs=1, batch_size=250, shuffle=True, validation_data=(X_val, X_val), callbacks=[es])
                     batch_num = batch_num + 1
                 except EOFError:
@@ -69,37 +62,27 @@ def fit_autoencoder(num_epochs_from,num_epochs_to, X_train_chunks_file, X_val, a
         loss.extend(history.history['loss'])
         val_loss.extend(history.history['val_loss'])
         if epoch%100 == 0:
-            save_to = "/home/hochyard/autoencoder_models_5_layers_prelu_act_no_cov_adam0.00001/autoencoder_chr" + str(chr) + "_" + str(epoch) + "_epochs"
+            print('Time fiting', epoch,'epoch:')
+            print('--- %s seconds---' % (time.time() - start_time))
+            save_to = "/home/hochyard/my_model/autoencoder/autoencoder_models_5_layers_prelu_act_no_cov_adam0.00001_batch_size250/autoencoder_chr" + str(chr) + "_" + str(epoch) + "_epochs"
             autoencoder.save(save_to,num_epochs_to)
-            #save_to = "/home/hochyard/autoencoder_models_5_layers_prelu_act_no_cov/encoder_chr" + str(chr) + "_" + str(epoch) + "_epochs"
-            #encoder.save(save_to)
-    plot_loss(loss, val_loss)
+    plot_loss(loss, val_loss,num_epochs_to,num_epochs_from, chr)
     return autoencoder
     
-def plot_loss(loss, val_loss):
+def plot_loss(loss, val_loss,num_epochs_to,num_epochs_from, chr):
     fig = plt.figure()
     plt.plot(loss)
     plt.plot(val_loss)
-    plt.title('Model Loss')
+    title = 'Autoencoder Loss Chromosome ' + str(chr)
+    plt.title(title)
     plt.ylabel('Loss')
     plt.xlabel('Epoch')
-    plt.legend(['Train', 'Test'], loc='upper left')
-    plt.xlim(0, 305)
-    plt.ylim(0, 0.15)
-    name = '/home/hochyard/autoencoder_models_5_layers_prelu_act_no_cov_adam0.00001/' + str(chr) + 'loss_autoencoder.png'
+    plt.legend(['Train', 'Validation'], loc='upper left')
+    temp = int(num_epochs_to-num_epochs_from + 5)
+    plt.xlim(0, temp)
+    plt.ylim(0, 0.2)
+    name = '/home/hochyard/my_model/autoencoder/autoencoder_models_5_layers_prelu_act_no_cov_adam0.00001_batch_size250/' + str(chr) + 'loss_autoencoder_600epochs.png'
     fig.savefig(name)
-
-#def predict_new_snps(encoder, X_chunks_file, output_file):
-#    with open(X_chunks_file, 'rb') as file_handle:
-#        with open(output_file, 'wb') as save_file_handle:
-#            while True:
-#                try:
-#                    batch = pickle.load(file_handle)
-#                    batch = batch.drop(['FID'], axis=1)
-#                    codings = encoder.predict(batch)
-#                    pickle.dump(codings, save_file_handle)
-#                except EOFError:
-#                    break
 
 def create_validation_set(X_train_chunks_file):
     with open(X_train_chunks_file, 'rb') as file_handle:
@@ -109,29 +92,27 @@ def create_validation_set(X_train_chunks_file):
 
 #------------------------------train---------------------------
 import time
-start_time = time.time()
 print('available GPUs: ')
 print(torch.cuda.device_count())
 
-# files
+
+
 #set variable 'from', 'to'
-for chr in range(os.environ['from'],os.environ['to']):
+for chr in range(int(os.environ['from']),int(os.environ['to'])):
+    start_time = time.time()
     print(chr)
     #load autoencoder 
-    #auto_name = "/home/hochyard/autoencoder_models_5_layers_prelu_act_no_cov_adam0.00001/autoencoder_chr" + str(chr) + "_200_epochs"
-    #autoencoder = keras.models.load_model(auto_name)
-    #encoder_name = "encoder_chr" + str(chr) + "_no_missing_300_epochs"
-    #encoder = keras.models.load_model(encoder_name)                                                    
+    #auto_name = "/home/hochyard/my_model/autoencoder/autoencoder_models_5_layers_prelu_act_no_cov_adam0.00001/autoencoder_chr" + str(chr) + "_700_epochs"
+    #autoencoder = keras.models.load_model(auto_name)                                                   
     X_train_chunks_file = "/home/hochyard/UKBB/results/data_for_model/chunks_for_each_chr/chr_" + str(chr) +"_X_train_1k_chunks_no_missing.pkl"
-    X_test_chunks_file = "/home/hochyard/UKBB/results/data_for_model/chunks_for_each_chr/chr_" + str(chr) + "_X_test_1k_chunks_no_missing.pkl"
     val_size = 1000
     X_val = create_validation_set(X_train_chunks_file)
     autoencoder = fit_autoencoder(num_epochs_from=1,
-                                  num_epochs_to=8,
+                                  num_epochs_to=600,
                                   X_train_chunks_file=X_train_chunks_file,
                                   X_val=X_val,
+                                  start_time = start_time,
                                   autoencoder = None)                                      
-    print("--- %s seconds for data fiting---" % (time.time() - start_time))
 
 
 
