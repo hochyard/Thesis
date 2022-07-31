@@ -1,8 +1,6 @@
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
-#from keras.models import Sequential
-#from keras.layers import Dense
 from tensorflow.keras.optimizers import SGD, Adam
 from tensorflow.keras import models
 from tensorflow.keras.callbacks import EarlyStopping
