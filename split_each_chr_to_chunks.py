@@ -7,7 +7,7 @@ from sklearn.impute import KNNImputer, SimpleImputer
 from sklearn.preprocessing import StandardScaler,MinMaxScaler
 import os
 
-def split_X_to_chunks(gene_end_file_name, gene_output_end_file_name, chunk_size, chr, gene_scaler):
+def split_X_to_chunks(gene_end_file_name, gene_output_end_file_name, chunk_size):
     from_ = 0
     to_ = chunk_size
     gene_output_file = '/home/hochyard/UKBB/results/data_for_model/chunks_for_each_chr/chr_' + str(chr) + gene_output_end_file_name
@@ -23,11 +23,6 @@ def split_X_to_chunks(gene_end_file_name, gene_output_end_file_name, chunk_size,
                 G_to_pandas = G_to_pandas.astype(np.int8)
                 G_to_pandas.reset_index(level=0, inplace=True)
                 G_to_pandas.rename(columns={'sample': 'FID'}, inplace=True)
-                if gene_scaler!=None:
-                    not_to_scale = G_to_pandas['FID']
-                    scaled_values = gene_scaler.transform(G_to_pandas.drop('FID', axis = 1))
-                    G_to_pandas = pd.DataFrame(scaled_values, index = G_to_pandas.index, columns = G_to_pandas.drop('FID', axis = 1).columns)
-                    G_to_pandas['FID'] = not_to_scale
                 pickle.dump(G_to_pandas, gene_file_handle, protocol=4)
                 from_ = to_
                 to_ = to_ + chunk_size
@@ -35,79 +30,20 @@ def split_X_to_chunks(gene_end_file_name, gene_output_end_file_name, chunk_size,
                 return
 
 
-def split_y_to_chunks(output_file, input_file, x_chunk_file, chunk_size):
-     y = pd.read_pickle(input_file)
-     with open(output_file, 'wb') as y_file_handle:
-         with open(x_chunk_file, 'rb') as x_file_handle:
-             from_ = 0
-             to_ = chunk_size
-             while True:
-                 try:
-                     X_batch = pickle.load(x_file_handle)
-                     y_batch = y[y['FID'].isin(X_batch['FID'])]
-                     pickle.dump(y_batch, y_file_handle, protocol=4) 
-                     from_ = to_
-                     to_ = to_ + chunk_size
-                 except EOFError:
-                        break
-
-def StandardScaler_incremental(end_file_name_to_standard, chr, chunk_size):
-    from_ = 0
-    to_ = chunk_size
-    file_name = '/home/hochyard/UKBB/results/data_for_model/chr' + str(chr) + end_file_name_to_standard
-    G = read_plink1_bin(file_name, verbose=False)  # xarray.core.dataarray.DataArray
-    #chr_scaler = StandardScaler()
-    chr_scaler = MinMaxScaler()
-    while True:  # while there are still samples
-        G_to_pandas = G[from_:to_, :].to_pandas()  # pandas.core.frame.DataFrame
-        if G_to_pandas.empty == False:  # their samples
-            chr_scaler.partial_fit(G_to_pandas)
-            from_ = to_
-            to_ = to_ + chunk_size
-        else:
-            #print(chr_scaler.mean_)
-            #print(chr_scaler.var_)
-            return chr_scaler
-                
-
-#set variable 'from', 'to', 'model', 'y'
+              
 #---------------for Autoencoder---------------------------
-if os.environ['model'] == autoencoder:
-    for chr in range(os.environ['from'],os.environ['to']):
-        #scaler = StandardScaler_incremental("_height_X_train_no_cov_no_missing.bed", chr, chunk_size=1000)
-        #train
-        split_X_to_chunks(gene_end_file_name="_X_train_no_cov_no_missing.bed",
-                         gene_output_end_file_name="_X_train_1k_chunks_no_missing.pkl",
-                         chunk_size=1000,
-                         chr = chr,
-                         gene_scaler = None)
-        #test
-        split_X_to_chunks(gene_end_file_name="_X_test_no_cov_no_missing.bed",
-                         gene_output_end_file_name="_X_test_1k_chunks_no_missing.pkl",
-                         chunk_size=1000,
-                         chr = chr,
-                         gene_scaler = None)
-else: 
-    #---------------for NN---------------------------
-    for chr in range(5,6):
-        #scaler = StandardScaler_incremental("_height_X_train_no_cov_no_missing.bed", chr, chunk_size=1000)
-        #train
-        split_X_to_chunks(gene_end_file_name="_height_X_train_no_cov_no_missing.bed",
-                         gene_output_end_file_name="_height_X_train_1k_chunks_no_missing.pkl",
-                         chunk_size=1000,
-                         chr = chr,
-                         gene_scaler = None)
-        #test
-        split_X_to_chunks(gene_end_file_name="_height_X_test_no_cov_no_missing.bed",
-                         gene_output_end_file_name="_height_X_test_1k_chunks_no_missing.pkl",
-                         chunk_size=1000,
-                         chr = chr,
-                         gene_scaler = None)
-if y==1:
-    split_y_to_chunks(output_file = "/home/hochyard/UKBB/results/data_for_model/chunks_for_each_chr/height_y_train_1k_chunks_no_missing.pkl",
-                      input_file = "/home/hochyard/UKBB/results/data_for_model/height_y_train.pkl",
-                      x_chunk_file = "chr_1_height_X_train_1k_chunks_with_cov_no_missing.pkl",
-                      chunk_size = 1000)
+chunk_size=1000
+for chr in range(os.environ['from'],os.environ['to']):
+    #train
+    split_X_to_chunks(gene_end_file_name="_X_train_no_cov_no_missing.bed",
+                     gene_output_end_file_name="_X_train_1k_chunks_no_missing.pkl",
+                     chunk_size=chunk_size)
+    #test
+    split_X_to_chunks(gene_end_file_name="_X_test_no_cov_no_missing.bed",
+                     gene_output_end_file_name="_X_test_1k_chunks_no_missing.pkl",
+                     chunk_size=chunk_size)
+
+
 
     
 
