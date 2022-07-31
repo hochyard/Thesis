@@ -25,19 +25,6 @@ def split_y_train_to_chunks(y_output_file, pheno_df, x_chunk_file, pheno_name):
                except EOFError:
                    break
                                
-def StandardScaler_incremental(y_file):
-    with open(y_file, 'rb') as file_handle:
-        scaler = StandardScaler()
-        while True:
-            try:
-                y_batch = pickle.load(file_handle)
-                y_batch = y_batch.drop(['FID'], axis=1)
-                scaler.partial_fit(y_batch)
-            except EOFError:
-                break
-    scale_y(y_file,scaler)
-    return scaler
-
 def split_test_y_to_chunks(input_df, x_chunk_file, pheno_name):
     pheno_df = pd.DataFrame(columns=['FID',pheno_name])
     with open(x_chunk_file, 'rb') as x_file_handle:
@@ -57,8 +44,7 @@ pheno['FID']=pheno['FID'].astype(str)
 #pheno = pheno[['FID','standing_height_f50_0_0']]
 pheno = pheno[['FID','hypertension']]
 pheno = pheno.dropna(axis=0).reset_index(drop=True)
-#pheno.loc[pheno["I10"] == 1, "I10"] = 0
-#pheno.loc[pheno["I10"] == 2, "I10"] = 1
+
 
 #train
 #union_train_gene = "/home/hochyard/my_model/autoencoder/autoencoder_models_5_layers_prelu_act_no_cov_adam0.00001/X_train_1k_chunks_dim_remove_no_missing_1000_epochs/all_chr_MinMax_scaled_cov_MinMax_scaled.pkl" #for Autoencoder
