@@ -11,10 +11,6 @@ cov_matrix = cov_matrix.rename(columns = {'#FID': 'FID'}, inplace = False)
 cov_matrix['FID']=cov_matrix['FID'].astype(str)
 cov_matrix = cov_matrix.dropna(axis=0).reset_index(drop=True)
 remove =[]
-for i in range(1,41):
-    genetic_str = 'genetic_principal_components_f22009_0_' + str(i)
-    remove += [genetic_str]
-cov_matrix = cov_matrix.drop(remove, axis=1) #remove 40 PCA variables
 IID = cov_matrix['IID']
 cov_matrix = cov_matrix.drop(['IID'], axis=1)
 cov_matrix.to_pickle('/home/hochyard/UKBB/results/data_for_model/cov_matrix_no_missing.pkl')
