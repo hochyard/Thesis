@@ -14,7 +14,7 @@ def split_X_to_chunks(gene_end_file_name, gene_output_end_file_name, chunk_size)
         G = read_plink1_bin(file_name, verbose=False)  # xarray.core.dataarray.DataArray
         while True:  # while there are still samples
             G_to_pandas = G[from_:to_, :].to_pandas()  # pandas.core.frame.DataFrame
-            if G_to_pandas.empty == False:  # their samples
+            if G_to_pandas.empty == False:  # there's more samples
                 (bim, fam, bed) = read_plink(file_name, verbose=False)  # bed is dask.array.core.Array
                 snp_columns = bim['snp'].to_numpy()
                 G_to_pandas.set_axis(snp_columns, axis=1, inplace=True)
@@ -28,8 +28,6 @@ def split_X_to_chunks(gene_end_file_name, gene_output_end_file_name, chunk_size)
                 return
 
 
-              
-#---------------for Autoencoder---------------------------
 chunk_size=1000
 for chr in range(os.environ['from'],os.environ['to']):
     #train
@@ -40,13 +38,3 @@ for chr in range(os.environ['from'],os.environ['to']):
     split_X_to_chunks(gene_end_file_name="_X_test_no_cov_no_missing.bed",
                      gene_output_end_file_name="_X_test_1k_chunks_no_missing.pkl",
                      chunk_size=chunk_size)
-
-
-
-    
-
-
-
-
-
-
