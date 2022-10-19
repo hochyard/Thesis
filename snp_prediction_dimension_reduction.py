@@ -33,6 +33,7 @@ for chr in range(int(os.environ['from']),int(os.environ['to'])):
     X_train_chunks_file = "/home/hochyard/UKBB/results/data_for_model/chunks_for_each_chr/chr_" + str(chr) +"_X_train_1k_chunks_no_missing.pkl"
     X_test_chunks_file = "/home/hochyard/UKBB/results/data_for_model/chunks_for_each_chr/chr_" + str(chr) +"_X_test_1k_chunks_no_missing.pkl"
     train_output_file = "/home/hochyard/my_model/autoencoder/autoencoder_models_5_layers_prelu_act_no_cov_adam0.00001/X_train_1k_chunks_dim_remove_no_missing_1000_epochs/chr_" + str(chr) + ".pkl"
+    # ------------------------------train-------------------------
     predict_new_snps(autoencoder=autoencoder,
                       X_chunks_file=X_train_chunks_file,
                       output_file=train_output_file)
