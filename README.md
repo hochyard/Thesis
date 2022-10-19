@@ -15,9 +15,9 @@ In this github folder, there are the central code files in my thesis. Files orde
 6. Scale the variables after dimensionality reduction: scale_genes.py
 7. Join variables from all chromosomes after dimensionality reduction + covarivate matrix: join_all_chr_after_dr.py
 8. Match the dataframe (the result of section 7) to specific phenotype: match_pheno_IDs.py
-9. Train DNN:
-  9.1. For continuous phenotype: NN.py
-  9.2. For binary phenotype: NN_for_binary_pheno.py
+9. Train perdiction model:
+  9.1. For height phenotype: Height_prediction.py
+  9.2. For hypertension phenotype: hypertension_prediction.py
 
 Notes:
 1. The input data sets are after preprocessing using PLINK2 software.
