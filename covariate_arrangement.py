@@ -36,7 +36,6 @@ cov_dummy.insert(1, "IID", IID)
 cov_dummy.to_csv('/home/hochyard/UKBB/results/data_for_model/cov_matrix_no_missing_no_40PCA.txt', header=True, index=False, sep='\t')
 
 #----scale cov----
-#scaler_cov = StandardScaler()
 scaler_cov = MinMaxScaler()
 train_scaled_values = pd.DataFrame(scaler_cov.fit_transform(train_cov_matrix[['age_when_attended_assessment_centre_f21003_0_0','genotype_measurement_batch_f22000_0_0']]), index = train_cov_matrix.index, columns = ['age_when_attended_assessment_centre_f21003_0_0','genotype_measurement_batch_f22000_0_0'])
 train_cov_matrix_scaled = train_cov_matrix.drop(['age_when_attended_assessment_centre_f21003_0_0','genotype_measurement_batch_f22000_0_0'], axis=1)
