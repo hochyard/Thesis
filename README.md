@@ -1,6 +1,8 @@
 # Thesis
 
-Files order:
+Develop traits prediction algorithm (both regression and classification) based on machine learning and deep learning methods, using a dataset with 470K features (genes) and 340K samples. Train an Autoencoder and implement principle component analysis for dimensionality reduction, then train Deep Neural Network and XGBoost models for trait prediction. 
+
+In this github folder, there are the central code files in my thesis. Files order:
 1. Split samples ID to train/test: split_train_test_IDs_for_autoencoder.py 
 2. Due to data size, split the data into samples chuncks: Split_each_chr_to_chunks.py
 3. Train dimensionality reduction:
@@ -17,3 +19,4 @@ Files order:
 
 Notes:
 1. The input data sets are after preprocessing using PLINK2 software.
+2. The trained dimensionality reduction models are now available in: https://github.com/nadavlab/genotyping_dimensionality_reduction 
