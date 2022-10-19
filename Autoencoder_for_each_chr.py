@@ -18,7 +18,7 @@ import os
 
 def build_autoencoder(input_size):
     new_dim_snps = int(input_size * 0.1)
-    # Denoising Autoencoders
+
     encoder = models.Sequential(name='encoder')
     encoder.add(layer=layers.Dense(units=new_dim_snps*2, activation=layers.PReLU(), input_shape=[input_size]))
     encoder.add(layers.Dropout(0.1))
@@ -93,9 +93,6 @@ import time
 print('available GPUs: ')
 print(torch.cuda.device_count())
 
-
-
-#set variable 'from', 'to'
 for chr in range(int(os.environ['from']),int(os.environ['to'])):
     start_time = time.time()
     print(chr)
