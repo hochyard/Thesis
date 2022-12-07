@@ -2,7 +2,7 @@
 
 I used a two stages approach. The first stage is a trait-agnostic (phenotype-agnostic), an unsupervised approach to dimensionality reduction. The second stage is training a prediction model using a supervised machine learning algorithm. Moreover, the first stage, which is computational resource intense, is independent of phenotype, i.e., its output can be used as an input for a prediction model for any chosen trait or disease, and therefore can be trained only once. 
 
-We evaluated the approach using two dimensionality reduction models, Deep Autoencoder and Principal Component Analysis, and two phenotype prediction models, Deep Neural Network and Extreme Gradient Boosting. The models were trained using the UK Biobank dataset with over 340K subjects and 460K features (genes). Moreover, we evaluated the approach on two phenotypes, height, and hypertension.
+I evaluated the approach using two dimensionality reduction models, Deep Autoencoder and Principal Component Analysis, and two phenotype prediction models, Deep Neural Network and Extreme Gradient Boosting. The models were trained using the UK Biobank dataset with over 340K subjects and 460K features (genes). Moreover, I evaluated the approach on two phenotypes, height (continuous), and hypertension (binary).
 
 In this github folder, there are the central code files in my thesis. Files order:
 1. Split samples ID to train/test: split_train_test_IDs_for_autoencoder.py 
